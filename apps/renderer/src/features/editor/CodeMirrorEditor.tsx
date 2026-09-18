@@ -64,8 +64,13 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorHandle, Props>(functi
         EditorView.updateListener.of((update) => {
           if (update.docChanged) onChangeRef.current(update.state.doc.toString());
         }),
+        // Dark-only editor: explicit background/foreground the caret can
+        // contrast against, plus CodeMirror's darkTheme facet so selection
+        // and the "cursor at click position" rendering use dark-friendly tints
+        // (its base theme switches from the default black caret otherwise).
+        EditorView.darkTheme.of(true),
         EditorView.theme({
-          '&': { height: '100%', fontSize: '14px' },
+          '&': { height: '100%', fontSize: '14px', backgroundColor: '#101820', color: '#e2e8f0' },
           '.cm-scroller': { fontFamily: 'ui-monospace, monospace', overflow: 'auto' },
           '.cm-gutters': { backgroundColor: '#101820', color: '#9FB3BF', border: 'none' },
         }),

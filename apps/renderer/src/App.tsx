@@ -3,14 +3,12 @@ import { VaultExplorer } from './features/vault-explorer/VaultExplorer';
 import { SplitView } from './features/editor/SplitView';
 import { Launcher } from './features/launcher/Launcher';
 import { useVaultStore } from './stores/vault-store';
-import { useTheme } from './theme/useTheme';
 
 export function App() {
   const vaultInfo = useVaultStore((s) => s.vaultInfo);
   const initialized = useVaultStore((s) => s.initialized);
   const initialize = useVaultStore((s) => s.initialize);
   const closeVault = useVaultStore((s) => s.closeVault);
-  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     void initialize();
@@ -38,13 +36,6 @@ export function App() {
           className="rounded px-2 py-1 font-display text-sm font-bold text-brand-600 hover:bg-brand-50 dark:text-brand-300 dark:hover:bg-slate-800"
         >
           {vaultInfo.name}
-        </button>
-        <button
-          type="button"
-          onClick={toggleTheme}
-          className="rounded px-2 py-1 text-xs text-muted hover:bg-brand-50 dark:text-muted-dark dark:hover:bg-slate-800"
-        >
-          {theme === 'dark' ? '☀️ Claro' : '🌙 Oscuro'}
         </button>
       </header>
       <div className="grid min-h-0 flex-1 grid-cols-[260px_1fr] grid-rows-[minmax(0,1fr)] overflow-hidden">
