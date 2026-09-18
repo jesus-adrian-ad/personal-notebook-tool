@@ -79,7 +79,7 @@
     ],
     "linux": {
       "target": ["deb"],
-      "icon": "build/icon.png",
+      "icon": "build/icons",
       "category": "Office",
       "synopsis": "Notas Markdown con vista previa, tablas, adjuntos y búsqueda."
     },
