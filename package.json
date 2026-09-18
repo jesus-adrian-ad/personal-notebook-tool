@@ -51,7 +51,7 @@
   },
   "build": {
     "appId": "com.notebook.personalnotebook",
-    "productName": "Personal Notebook",
+    "productName": "Personal-Notebook",
     "directories": {
       "output": "release",
       "buildResources": "build"
@@ -70,6 +70,9 @@
       "icon": "build/icon.png",
       "category": "Office",
       "synopsis": "Notas Markdown con vista previa, tablas, adjuntos y búsqueda."
+    },
+    "deb": {
+      "afterInstall": "build/after-install.tpl"
     }
   }
 }
