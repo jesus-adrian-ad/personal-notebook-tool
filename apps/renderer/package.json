@@ -1,0 +1,26 @@
+{
+  "name": "@notebook/renderer",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@notebook/shared": "*",
+    "@notebook/markdown-engine": "*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^5.0.1",
+    "@codemirror/state": "^6.4.1",
+    "@codemirror/view": "^6.35.0",
+    "@codemirror/lang-markdown": "^6.3.1",
+    "@codemirror/language-data": "^6.5.1",
+    "@codemirror/commands": "^6.7.1",
+    "@radix-ui/react-tabs": "^1.1.1",
+    "@radix-ui/react-dialog": "^1.1.2",
+    "@fontsource/montserrat": "^5.1.0",
+    "@fontsource/inter": "^5.1.0",
+    "highlight.js": "^11.10.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1"
+  }
+}

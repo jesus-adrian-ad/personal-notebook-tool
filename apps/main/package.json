@@ -1,0 +1,21 @@
+{
+  "name": "@notebook/main",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "dependencies": {
+    "@notebook/shared": "*",
+    "@electron-toolkit/utils": "^3.0.0",
+    "better-sqlite3": "^11.5.0",
+    "chokidar": "^4.0.1",
+    "gray-matter": "^4.0.3",
+    "simple-git": "^3.27.0",
+    "open-graph-scraper": "^6.8.3",
+    "zod": "^3.23.8",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/uuid": "^10.0.0"
+  }
+}

@@ -1,0 +1,19 @@
+node_modules/
+dist/
+*.tsbuildinfo
+dist-electron/
+out/
+release/
+*.log
+.DS_Store
+.env
+.env.local
+
+# native module build artifacts
+apps/main/build/
+
+# local test vaults used by e2e/manual testing
+.test-vaults/
+
+# Claude Code local session/tool state (not project source)
+.claude/

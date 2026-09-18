@@ -1,0 +1,30 @@
+{
+  "name": "@notebook/markdown-engine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/parser.ts",
+  "types": "src/parser.ts",
+  "exports": {
+    ".": "./src/parser.ts",
+    "./react": "./src/renderer-react.tsx"
+  },
+  "dependencies": {
+    "unified": "^11.0.5",
+    "remark-parse": "^11.0.0",
+    "remark-gfm": "^4.0.0",
+    "remark-frontmatter": "^5.0.0",
+    "remark-rehype": "^11.1.1",
+    "hast-util-to-jsx-runtime": "^2.3.2",
+    "unist-util-visit": "^5.0.0",
+    "mdast-util-to-string": "^4.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/hast": "^3.0.4",
+    "@types/react": "^18.3.12"
+  }
+}

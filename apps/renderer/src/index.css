@@ -1,0 +1,134 @@
+@import '@fontsource/montserrat/700.css';
+@import '@fontsource/montserrat/800.css';
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+/* YiSoft system: Inter is the body default; Montserrat is reserved for headings (see .markdown-body below). */
+body {
+  @apply bg-paper font-sans text-ink dark:bg-carbon dark:text-slate-100;
+}
+
+/*
+ * Tailwind's preflight strips h1-h6 down to inherited font-size/weight on
+ * purpose, so the markdown preview (rendered as plain <h1>/<p>/<ul>... via
+ * hast-util-to-jsx-runtime, with no per-tag component overrides) rendered
+ * every element at the same size until these rules were added. Sizes/weights
+ * and the Montserrat/Inter split follow YiSoft's typographic guide.
+ */
+.markdown-body h1 {
+  @apply mb-3 mt-5 font-display text-3xl font-extrabold tracking-tight text-brand-600 dark:text-brand-300;
+}
+.markdown-body h2 {
+  @apply mb-2 mt-4 font-display text-2xl font-bold tracking-tight text-brand-600 dark:text-brand-300;
+}
+.markdown-body h3 {
+  @apply mb-2 mt-4 font-display text-xl font-bold text-ink dark:text-slate-50;
+}
+.markdown-body h4 {
+  @apply mb-1 mt-3 text-lg font-bold text-ink dark:text-slate-100;
+}
+.markdown-body h5,
+.markdown-body h6 {
+  @apply mb-1 mt-3 text-base font-bold text-ink dark:text-slate-100;
+}
+.markdown-body p {
+  @apply my-2 leading-relaxed;
+}
+.markdown-body ul {
+  @apply my-2 list-disc pl-6;
+}
+.markdown-body ol {
+  @apply my-2 list-decimal pl-6;
+}
+.markdown-body li {
+  @apply my-0.5;
+}
+.markdown-body blockquote {
+  @apply my-2 border-l-4 border-accent-400 pl-3 italic text-muted dark:border-accent-700 dark:text-muted-dark;
+}
+.markdown-body hr {
+  @apply my-4 border-brand-100 dark:border-slate-800;
+}
+.markdown-body a {
+  @apply font-semibold text-accent-700 underline decoration-transparent transition hover:decoration-accent-700 dark:text-accent-400 dark:hover:decoration-accent-400;
+}
+.markdown-body strong {
+  @apply font-semibold text-ink dark:text-slate-50;
+}
+.markdown-body code {
+  @apply rounded bg-brand-50 px-1 py-0.5 font-mono text-[0.85em] text-brand-700 dark:bg-slate-800 dark:text-brand-200;
+}
+.markdown-body pre {
+  @apply my-2 overflow-x-auto rounded-lg bg-carbon p-3 text-slate-100;
+}
+.markdown-body pre code {
+  @apply bg-transparent p-0 text-inherit;
+}
+
+/*
+ * Syntax colors for the read-only preview's code blocks (highlight.js
+ * classes, see CodeBlock in MarkdownPreview.tsx). The code block's own
+ * background is always the dark `carbon` tone regardless of the app's
+ * light/dark toggle, so these are light/pastel on purpose — plain code text
+ * stays `.markdown-body pre`'s light gray, this only colors recognized
+ * tokens on top of it.
+ */
+.markdown-body .hljs-keyword,
+.markdown-body .hljs-selector-tag,
+.markdown-body .hljs-literal,
+.markdown-body .hljs-section,
+.markdown-body .hljs-link {
+  color: #7ee8b8;
+}
+.markdown-body .hljs-string,
+.markdown-body .hljs-attr,
+.markdown-body .hljs-symbol,
+.markdown-body .hljs-bullet,
+.markdown-body .hljs-addition {
+  color: #ffd98e;
+}
+.markdown-body .hljs-comment,
+.markdown-body .hljs-quote,
+.markdown-body .hljs-deletion,
+.markdown-body .hljs-meta {
+  color: #9fb3bf;
+  font-style: italic;
+}
+.markdown-body .hljs-number,
+.markdown-body .hljs-regexp {
+  color: #93c5fd;
+}
+.markdown-body .hljs-title,
+.markdown-body .hljs-name,
+.markdown-body .hljs-built_in,
+.markdown-body .hljs-type,
+.markdown-body .hljs-class .hljs-title {
+  color: #a5d8ff;
+}
+.markdown-body .hljs-variable,
+.markdown-body .hljs-template-variable,
+.markdown-body .hljs-attribute {
+  color: #ffcba4;
+}
+.markdown-body .hljs-emphasis {
+  font-style: italic;
+}
+.markdown-body .hljs-strong {
+  font-weight: 700;
+}

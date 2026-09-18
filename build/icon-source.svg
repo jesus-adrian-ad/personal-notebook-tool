@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="100" fill="#1B4965"/>
+
+  <!-- notebook -->
+  <rect x="146" y="88" width="222" height="336" rx="18" fill="#F7F9FA"/>
+  <rect x="146" y="88" width="36" height="336" rx="18" fill="#2EC486"/>
+  <circle cx="164" cy="140" r="7" fill="#1B4965"/>
+  <circle cx="164" cy="180" r="7" fill="#1B4965"/>
+  <circle cx="164" cy="220" r="7" fill="#1B4965"/>
+  <circle cx="164" cy="260" r="7" fill="#1B4965"/>
+  <circle cx="164" cy="300" r="7" fill="#1B4965"/>
+  <circle cx="164" cy="340" r="7" fill="#1B4965"/>
+  <circle cx="164" cy="380" r="7" fill="#1B4965"/>
+
+  <!-- ruled lines on the page -->
+  <rect x="206" y="150" width="132" height="14" rx="7" fill="#C9D3D9"/>
+  <rect x="206" y="188" width="132" height="14" rx="7" fill="#C9D3D9"/>
+  <rect x="206" y="226" width="94" height="14" rx="7" fill="#C9D3D9"/>
+
+  <!-- pencil, diagonal -->
+  <g transform="translate(118,372) rotate(-48)">
+    <rect x="0" y="0" width="44" height="30" rx="10" fill="#F4A6C1"/>
+    <rect x="0" y="26" width="44" height="18" fill="#E4EAED"/>
+    <rect x="0" y="42" width="44" height="176" fill="#FFD98E"/>
+    <polygon points="0,218 44,218 22,256" fill="#C98A4B"/>
+    <polygon points="15,246 29,246 22,262" fill="#222831"/>
+  </g>
+</svg>
