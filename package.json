@@ -4,6 +4,11 @@
   "type": "module",
   "version": "0.1.0",
   "description": "Personal notebook tool: Markdown notes with live preview, visual tables, attachments, tags and full-text search.",
+  "author": {
+    "name": "Jesus Adrian Alcocer Donez",
+    "email": "jesus.adrian.01@hotmail.com"
+  },
+  "homepage": "https://example.com",
   "main": "apps/main/dist/index.js",
   "workspaces": [
     "apps/*",
@@ -17,7 +22,8 @@
     "dev": "electron-vite dev",
     "prebuild": "npm run rebuild:electron",
     "build": "electron-vite build",
-    "build:app": "electron-builder",
+    "prebuild:app": "npm run rebuild:electron",
+    "build:app": "electron-vite build && electron-builder",
     "lint": "eslint .",
     "pretest": "npm run rebuild:node",
     "test": "vitest run",
