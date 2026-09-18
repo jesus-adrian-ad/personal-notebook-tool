@@ -7,25 +7,25 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 const root = __dirname;
 
 /**
- * electron-vite's externalizeDepsPlugin() reads dependencies from the
- * package.json at process.cwd() — the repo root here, which lists none of
- * apps/main's actual runtime deps (they live in apps/main/package.json in
- * this monorepo layout). Without externalizing better-sqlite3, Rollup tries
- * to bundle it and chokes on its dynamic require() of the compiled .node
- * binary ("Could not dynamically require ... better_sqlite3.node"). Reading
- * each app's own package.json here and passing the result as
- * rollupOptions.external sidesteps that cwd assumption entirely.
+ * Every real npm dependency the main process needs at runtime is declared in
+ * the ROOT package.json — that is the only one electron-builder reads when
+ * deciding which node_modules to ship, so declaring them in
+ * apps/main/package.json instead left the packaged app crashing with
+ * "Cannot find module '@electron-toolkit/utils'". The same list feeds
+ * rollupOptions.external here, so those modules are required from
+ * node_modules at runtime rather than bundled — which also keeps Rollup away
+ * from better-sqlite3's dynamic require() of its compiled .node binary.
+ *
+ * @notebook/shared is deliberately absent: it is TS-source-only workspace
+ * code with no build of its own, so it must be bundled, not externalized.
  */
-function workspaceDeps(pkgJsonPath: string, exclude: string[] = []): string[] {
-  const pkg = JSON.parse(readFileSync(pkgJsonPath, 'utf-8')) as { dependencies?: Record<string, string> };
-  return Object.keys(pkg.dependencies ?? {}).filter((name) => !exclude.includes(name));
-}
+const runtimeDeps = Object.keys(
+  (JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf-8')) as { dependencies?: Record<string, string> })
+    .dependencies ?? {},
+);
 
-const mainExternal = ['electron', ...workspaceDeps(resolve(root, 'apps/main/package.json'), ['@notebook/shared'])];
-const preloadExternal = [
-  'electron',
-  ...workspaceDeps(resolve(root, 'apps/preload/package.json'), ['@notebook/shared']),
-];
+const mainExternal = ['electron', ...runtimeDeps];
+const preloadExternal = ['electron', ...runtimeDeps];
 
 export default defineConfig({
   main: {

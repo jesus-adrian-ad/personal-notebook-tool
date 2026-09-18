@@ -29,6 +29,15 @@
     "test": "vitest run",
     "typecheck": "tsc -b tsconfig.json"
   },
+  "comment:dependencies": "Runtime deps of the main process live here, not in apps/main: electron-builder only reads the root package.json to decide which node_modules to ship, and electron.vite.config.ts reads this same list to keep them external instead of bundling them.",
+  "dependencies": {
+    "@electron-toolkit/utils": "^3.0.0",
+    "better-sqlite3": "^11.5.0",
+    "gray-matter": "^4.0.3",
+    "open-graph-scraper": "^6.8.3",
+    "uuid": "^11.0.3",
+    "zod": "^3.23.8"
+  },
   "devDependencies": {
     "typescript": "^5.6.3",
     "vitest": "^2.1.4",
