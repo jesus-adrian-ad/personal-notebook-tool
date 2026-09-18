@@ -81,6 +81,21 @@ body {
   @apply bg-transparent p-0 text-inherit;
 }
 
+/* Caret del editor: CodeMirror elige negro/blanco según prefers-color-scheme,
+   pero esta app alterna el tema con la clase .dark, así que el cursor quedaba
+   oscuro sobre el fondo carbon. Se fuerza grueso (3px) y con contraste en
+   cada tema. La especificidad extra gana al tema base de CodeMirror. */
+.cm-editor .cm-content .cm-cursor,
+.cm-editor .cm-content .cm-cursor-secondary {
+  border-left-width: 3px;
+  margin-left: -1.5px;
+  border-left-color: #222831;
+}
+.dark .cm-editor .cm-content .cm-cursor,
+.dark .cm-editor .cm-content .cm-cursor-secondary {
+  border-left-color: #ffffff;
+}
+
 /*
  * Syntax colors for the read-only preview's code blocks (highlight.js
  * classes, see CodeBlock in MarkdownPreview.tsx). The code block's own
