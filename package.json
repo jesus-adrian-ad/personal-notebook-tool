@@ -52,6 +52,9 @@
   "build": {
     "appId": "com.notebook.personalnotebook",
     "productName": "Personal-Notebook",
+    "extraMetadata": {
+      "type": "commonjs"
+    },
     "directories": {
       "output": "release",
       "buildResources": "build"
