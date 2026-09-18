@@ -28,6 +28,10 @@ export function writeNoteFile(rootPath: string, relativePath: string, raw: strin
   writeFileSync(fullPath, raw, 'utf-8');
 }
 
+export function noteFileExists(rootPath: string, relativePath: string): boolean {
+  return existsSync(join(rootPath, relativePath));
+}
+
 export function deleteNoteFile(rootPath: string, relativePath: string): void {
   rmSync(join(rootPath, relativePath), { force: true });
 }
@@ -67,6 +71,21 @@ export function deleteFolderIfEmpty(rootPath: string, relativePath: string): voi
     throw new Error('La carpeta no está vacía. Elimina o mueve su contenido primero.');
   }
   rmSync(fullPath, { recursive: true });
+}
+
+/**
+ * Renames a folder in place. Refuses to overwrite an existing target — a
+ * collision would silently merge folders on most platforms. Callers are
+ * responsible for updating the notes index afterwards (paths under the folder
+ * change with it).
+ */
+export function renameFolder(rootPath: string, fromRelative: string, toRelative: string): void {
+  const from = join(rootPath, fromRelative);
+  const to = join(rootPath, toRelative);
+  if (existsSync(to)) {
+    throw new Error(`Ya existe una carpeta llamada "${basename(toRelative)}" en este nivel.`);
+  }
+  renameSync(from, to);
 }
 
 const IGNORED_TOP_LEVEL = new Set([NOTEBOOK_DIR, ATTACHMENTS_DIR, '.git']);

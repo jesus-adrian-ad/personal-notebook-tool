@@ -64,7 +64,7 @@ function NoteEditor({ note }: { note: Note }) {
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full min-h-0 flex-col">
       <div className="flex items-center justify-between gap-3 border-b border-brand-100 bg-white px-3 py-1.5 dark:border-slate-800 dark:bg-slate-900">
         <TagEditor note={note} />
         <div className="flex shrink-0 items-center gap-2">
@@ -88,11 +88,11 @@ function NoteEditor({ note }: { note: Note }) {
           </button>
         </div>
       </div>
-      <div className="grid flex-1 grid-cols-2 overflow-hidden">
-        <div className="h-full border-r border-brand-100 dark:border-slate-800">
+      <div className="grid min-h-0 flex-1 grid-cols-2 grid-rows-[minmax(0,1fr)] overflow-hidden">
+        <div className="min-h-0 overflow-hidden border-r border-brand-100 dark:border-slate-800">
           <CodeMirrorEditor ref={editorRef} value={body} onChange={handleChange} />
         </div>
-        <div className="h-full">
+        <div className="min-h-0 overflow-hidden">
           <MarkdownPreview source={body} onTableEdit={handleTableEdit} />
         </div>
       </div>

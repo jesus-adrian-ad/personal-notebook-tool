@@ -19,6 +19,7 @@ const api = {
     getRecents: () => invoke('vault:getRecents', undefined),
     removeRecent: (rootPath: string) => invoke('vault:removeRecent', { rootPath }),
     createFolder: (parentPath: string, name: string) => invoke('vault:createFolder', { parentPath, name }),
+    renameFolder: (path: string, newName: string) => invoke('vault:renameFolder', { path, newName }),
     deleteFolder: (path: string) => invoke('vault:deleteFolder', { path }),
   },
   notes: {

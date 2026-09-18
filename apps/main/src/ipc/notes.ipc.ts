@@ -9,7 +9,7 @@ const createSchema = z.object({
 });
 const getSchema = z.object({ id: z.string() });
 const updateSchema = z.object({ id: z.string(), body: z.string() });
-const renameSchema = z.object({ id: z.string(), newPath: z.string().min(1) });
+const renameSchema = z.object({ id: z.string(), newTitle: z.string().trim().min(1) });
 const deleteSchema = z.object({ id: z.string() });
 const setTagsSchema = z.object({ noteId: z.string(), tags: z.array(z.string()) });
 

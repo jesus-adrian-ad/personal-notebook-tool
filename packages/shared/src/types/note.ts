@@ -25,7 +25,8 @@ export interface UpdateNoteInput {
   body: string;
 }
 
+/** Renames in place: the note stays in its folder, only its title/filename changes. */
 export interface RenameNoteInput {
   id: string;
-  newPath: string;
+  newTitle: string;
 }

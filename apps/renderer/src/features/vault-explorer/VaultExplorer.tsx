@@ -48,13 +48,49 @@ function InlineCreateInput({
   );
 }
 
+function RenameInput({ initial, onDone }: { initial: string; onDone: (value: string | null) => void }) {
+  const [value, setValue] = useState(initial);
+
+  return (
+    <input
+      autoFocus
+      value={value}
+      onFocus={(e) => e.target.select()}
+      onChange={(e) => setValue(e.target.value)}
+      onBlur={() => onDone(value)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') onDone(value);
+        if (e.key === 'Escape') onDone(null);
+      }}
+      className="my-0.5 w-full rounded border border-brand-300 bg-white px-2 py-0.5 text-sm text-ink outline-none focus:border-brand-500 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100"
+    />
+  );
+}
+
 function NoteNode({ node, depth }: { node: VaultTreeFile; depth: number }) {
   const openNote = useVaultStore((s) => s.openNote);
   const deleteNote = useVaultStore((s) => s.deleteNote);
+  const renameNote = useVaultStore((s) => s.renameNote);
   const activeNoteId = useVaultStore((s) => s.activeNote?.id);
   const [confirming, setConfirming] = useState(false);
+  const [renaming, setRenaming] = useState(false);
   const style = { paddingLeft: `${depth * 14 + 8}px` };
   const title = node.name.replace(/\.md$/, '');
+
+  if (renaming) {
+    return (
+      <div style={style} className="pr-2">
+        <RenameInput
+          initial={title}
+          onDone={(value) => {
+            setRenaming(false);
+            const trimmed = value?.trim();
+            if (trimmed && trimmed !== title && node.noteId) void renameNote(node.noteId, trimmed);
+          }}
+        />
+      </div>
+    );
+  }
 
   if (confirming) {
     return (
@@ -87,6 +123,8 @@ function NoteNode({ node, depth }: { node: VaultTreeFile; depth: number }) {
       <button
         type="button"
         onClick={() => node.noteId && openNote(node.noteId)}
+        onDoubleClick={() => setRenaming(true)}
+        title="Doble clic para renombrar"
         className={`block flex-1 truncate rounded py-1 text-left text-sm transition ${
           isActive
             ? 'bg-brand-100 font-medium text-brand-700 dark:bg-brand-900/40 dark:text-brand-300'
@@ -97,9 +135,17 @@ function NoteNode({ node, depth }: { node: VaultTreeFile; depth: number }) {
       </button>
       <button
         type="button"
+        title="Renombrar nota"
+        onClick={() => setRenaming(true)}
+        className="shrink-0 rounded px-1.5 text-xs text-muted hover:bg-brand-50 hover:text-brand-700 dark:text-muted-dark dark:hover:bg-slate-800"
+      >
+        ✏️
+      </button>
+      <button
+        type="button"
         title="Eliminar nota"
         onClick={() => setConfirming(true)}
-        className="hidden shrink-0 rounded px-1.5 text-xs text-muted hover:bg-red-50 hover:text-red-600 group-hover:block dark:text-muted-dark dark:hover:bg-slate-800"
+        className="shrink-0 rounded px-1.5 text-xs text-muted hover:bg-red-50 hover:text-red-600 dark:text-muted-dark dark:hover:bg-slate-800"
       >
         🗑
       </button>
@@ -109,40 +155,63 @@ function NoteNode({ node, depth }: { node: VaultTreeFile; depth: number }) {
 
 function FolderNode({ node, depth }: { node: VaultTreeFolder; depth: number }) {
   const deleteFolder = useVaultStore((s) => s.deleteFolder);
+  const renameFolder = useVaultStore((s) => s.renameFolder);
   const [creating, setCreating] = useState<CreateMode | null>(null);
+  const [renaming, setRenaming] = useState(false);
   const style = { paddingLeft: `${depth * 14 + 8}px` };
 
   return (
     <div>
-      <div style={style} className="group flex items-center justify-between py-1 pr-1">
-        <span className="truncate text-sm font-medium text-muted dark:text-muted-dark">📁 {node.name}</span>
-        <span className="hidden shrink-0 items-center gap-0.5 group-hover:flex">
-          <button
-            type="button"
-            title="Nueva nota en esta carpeta"
-            onClick={() => setCreating('note')}
-            className="rounded px-1 text-xs text-muted hover:bg-accent-50 hover:text-accent-700 dark:text-muted-dark dark:hover:bg-slate-800"
-          >
-            📝+
-          </button>
-          <button
-            type="button"
-            title="Nueva subcarpeta"
-            onClick={() => setCreating('folder')}
-            className="rounded px-1 text-xs text-muted hover:bg-accent-50 hover:text-accent-700 dark:text-muted-dark dark:hover:bg-slate-800"
-          >
-            📁+
-          </button>
-          <button
-            type="button"
-            title="Eliminar carpeta (debe estar vacía)"
-            onClick={() => void deleteFolder(node.path)}
-            className="rounded px-1 text-xs text-muted hover:bg-red-50 hover:text-red-600 dark:text-muted-dark dark:hover:bg-slate-800"
-          >
-            🗑
-          </button>
-        </span>
-      </div>
+      {renaming ? (
+        <div style={style} className="pr-2">
+          <RenameInput
+            initial={node.name}
+            onDone={(value) => {
+              setRenaming(false);
+              const trimmed = value?.trim();
+              if (trimmed && trimmed !== node.name) void renameFolder(node.path, trimmed);
+            }}
+          />
+        </div>
+      ) : (
+        <div style={style} className="group flex items-center justify-between py-1 pr-1">
+          <span className="truncate text-sm font-medium text-muted dark:text-muted-dark">📁 {node.name}</span>
+          <span className="flex shrink-0 items-center gap-0.5">
+            <button
+              type="button"
+              title="Nueva nota en esta carpeta"
+              onClick={() => setCreating('note')}
+              className="rounded px-1 text-xs text-muted hover:bg-accent-50 hover:text-accent-700 dark:text-muted-dark dark:hover:bg-slate-800"
+            >
+              📝+
+            </button>
+            <button
+              type="button"
+              title="Nueva subcarpeta"
+              onClick={() => setCreating('folder')}
+              className="rounded px-1 text-xs text-muted hover:bg-accent-50 hover:text-accent-700 dark:text-muted-dark dark:hover:bg-slate-800"
+            >
+              📁+
+            </button>
+            <button
+              type="button"
+              title="Renombrar carpeta"
+              onClick={() => setRenaming(true)}
+              className="rounded px-1 text-xs text-muted hover:bg-accent-50 hover:text-accent-700 dark:text-muted-dark dark:hover:bg-slate-800"
+            >
+              ✏️
+            </button>
+            <button
+              type="button"
+              title="Eliminar carpeta (debe estar vacía)"
+              onClick={() => void deleteFolder(node.path)}
+              className="rounded px-1 text-xs text-muted hover:bg-red-50 hover:text-red-600 dark:text-muted-dark dark:hover:bg-slate-800"
+            >
+              🗑
+            </button>
+          </span>
+        </div>
+      )}
       {creating && (
         <InlineCreateInput depth={depth + 1} mode={creating} folderPath={node.path} onDone={() => setCreating(null)} />
       )}
@@ -164,11 +233,12 @@ function TreeNode({ node, depth }: { node: VaultTreeNode; depth: number }) {
 export function VaultExplorer() {
   const tree = useVaultStore((s) => s.tree);
   const error = useVaultStore((s) => s.error);
+  const clearError = useVaultStore((s) => s.clearError);
   const searchQuery = useVaultStore((s) => s.searchQuery);
   const [creating, setCreating] = useState<CreateMode | null>(null);
 
   return (
-    <div className="flex h-full flex-col border-r border-brand-100 bg-brand-50/40 dark:border-slate-800 dark:bg-slate-900/40">
+    <div className="flex h-full min-h-0 flex-col border-r border-brand-100 bg-brand-50/40 dark:border-slate-800 dark:bg-slate-900/40">
       <div className="flex items-center justify-between border-b border-brand-100 p-2 dark:border-slate-800">
         <span className="text-xs font-bold uppercase tracking-widest text-accent-700 dark:text-accent-400">
           Notas
@@ -193,10 +263,13 @@ export function VaultExplorer() {
       {error && (
         <div className="flex items-start justify-between gap-2 border-b border-red-200 bg-red-50 px-2 py-1.5 text-xs text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-300">
           <span>{error}</span>
+          <button type="button" onClick={clearError} title="Cerrar" className="shrink-0 hover:text-red-900 dark:hover:text-red-100">
+            ✕
+          </button>
         </div>
       )}
       <SearchBar />
-      <div className="flex-1 overflow-y-auto p-1">
+      <div className="min-h-0 flex-1 overflow-y-auto p-1">
         {searchQuery ? (
           <SearchResultsList />
         ) : (

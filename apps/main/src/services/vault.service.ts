@@ -1,4 +1,4 @@
-import { join, basename } from 'node:path';
+import { join, basename, dirname } from 'node:path';
 import type Database from 'better-sqlite3';
 import type { VaultInfo, VaultTreeNode } from '@notebook/shared';
 import { openVaultDatabase } from '../repositories/db';
@@ -10,6 +10,7 @@ import {
   ensureVaultStructure,
   listVaultTree,
   NOTEBOOK_DIR,
+  renameFolder as renameFolderOnDisk,
   sanitizeSegment,
 } from '../fs/vault-fs';
 
@@ -85,5 +86,16 @@ export class VaultService {
   deleteFolder(path: string): void {
     const { rootPath } = this.getSession();
     deleteFolderIfEmpty(rootPath, path);
+  }
+
+  /** Renames a folder in its parent; the notes inside it keep their filenames/titles. */
+  renameFolder(path: string, newName: string): void {
+    const { rootPath, notes } = this.getSession();
+    const parent = dirname(path);
+    const safeName = sanitizeSegment(newName);
+    const newPath = parent === '.' ? safeName : join(parent, safeName);
+    if (newPath === path) return;
+    renameFolderOnDisk(rootPath, path, newPath);
+    notes.updatePathPrefix(path, newPath);
   }
 }

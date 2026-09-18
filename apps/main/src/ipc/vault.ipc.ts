@@ -6,6 +6,7 @@ import type { AppSettingsService } from '../services/app-settings.service';
 const openSchema = z.object({ rootPath: z.string().optional() });
 const removeRecentSchema = z.object({ rootPath: z.string() });
 const createFolderSchema = z.object({ parentPath: z.string(), name: z.string().min(1) });
+const renameFolderSchema = z.object({ path: z.string(), newName: z.string().trim().min(1) });
 const deleteFolderSchema = z.object({ path: z.string() });
 
 export function registerVaultIpc(vault: VaultService, appSettings: AppSettingsService): void {
@@ -39,6 +40,11 @@ export function registerVaultIpc(vault: VaultService, appSettings: AppSettingsSe
   ipcMain.handle('vault:createFolder', async (_event, req) => {
     const { parentPath, name } = createFolderSchema.parse(req);
     vault.createFolder(parentPath, name);
+  });
+
+  ipcMain.handle('vault:renameFolder', async (_event, req) => {
+    const { path, newName } = renameFolderSchema.parse(req);
+    vault.renameFolder(path, newName);
   });
 
   ipcMain.handle('vault:deleteFolder', async (_event, req) => {

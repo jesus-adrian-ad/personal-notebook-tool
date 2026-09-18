@@ -84,6 +84,20 @@ export class NotesRepository {
     return new Map(rows.map((r) => [r.path, r.id]));
   }
 
+  /**
+   * Rewrites the stored path of every note inside a renamed folder
+   * (`oldPrefix/…` → `newPrefix/…`). Titles come from the filename, which is
+   * untouched by a folder rename, so only `path` needs updating.
+   */
+  updatePathPrefix(oldPrefix: string, newPrefix: string): void {
+    this.db
+      .prepare(
+        `UPDATE notes SET path = ? || substr(path, ?)
+         WHERE (path = ? OR path LIKE ?) AND deleted_at IS NULL`,
+      )
+      .run(newPrefix, oldPrefix.length + 1, oldPrefix, `${oldPrefix}/%`);
+  }
+
   softDelete(id: string): void {
     this.db.prepare('UPDATE notes SET deleted_at = ? WHERE id = ?').run(new Date().toISOString(), id);
   }

@@ -27,10 +27,19 @@ interface VaultState {
   openNote: (id: string) => Promise<void>;
   saveActiveNoteBody: (body: string) => Promise<void>;
   createNote: (folderPath: string, title: string) => Promise<void>;
+  renameNote: (id: string, newTitle: string) => Promise<void>;
   deleteNote: (id: string) => Promise<void>;
+  clearError: () => void;
   createFolder: (parentPath: string, name: string) => Promise<void>;
+  renameFolder: (path: string, newName: string) => Promise<void>;
   deleteFolder: (path: string) => Promise<void>;
   setTagsForActiveNote: (tags: string[]) => Promise<void>;
+}
+
+/** ipcRenderer.invoke wraps main-process errors as "Error invoking remote method '<channel>': Error: <msg>" — show only <msg>. */
+function errorMessage(err: unknown): string {
+  const raw = err instanceof Error ? err.message : String(err);
+  return raw.replace(/^Error invoking remote method '[^']+': (?:Error: )?/, '');
 }
 
 async function loadOpenedVault(set: (partial: Partial<VaultState>) => void, rootPath?: string) {
@@ -79,7 +88,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
       await loadOpenedVault(set);
       set({ recents: await window.notebookApi.vault.getRecents() });
     } catch (err) {
-      set({ loading: false, error: err instanceof Error ? err.message : String(err) });
+      set({ loading: false, error: errorMessage(err) });
     }
   },
 
@@ -137,10 +146,29 @@ export const useVaultStore = create<VaultState>((set, get) => ({
   },
 
   createNote: async (folderPath, title) => {
-    const note = await window.notebookApi.notes.create({ folderPath, title });
-    await get().refreshTree();
-    set({ activeNote: note });
+    set({ error: null });
+    try {
+      const note = await window.notebookApi.notes.create({ folderPath, title });
+      await get().refreshTree();
+      set({ activeNote: note });
+    } catch (err) {
+      set({ error: errorMessage(err) });
+    }
   },
+
+  renameNote: async (id, newTitle) => {
+    set({ error: null });
+    try {
+      const summary = await window.notebookApi.notes.rename({ id, newTitle });
+      const active = get().activeNote;
+      if (active?.id === id) set({ activeNote: { ...active, ...summary } });
+      await get().refreshTree();
+    } catch (err) {
+      set({ error: errorMessage(err) });
+    }
+  },
+
+  clearError: () => set({ error: null }),
 
   deleteNote: async (id) => {
     await window.notebookApi.notes.delete(id);
@@ -154,7 +182,7 @@ export const useVaultStore = create<VaultState>((set, get) => ({
       await window.notebookApi.vault.createFolder(parentPath, name);
       await get().refreshTree();
     } catch (err) {
-      set({ error: err instanceof Error ? err.message : String(err) });
+      set({ error: errorMessage(err) });
     }
   },
 
@@ -164,7 +192,17 @@ export const useVaultStore = create<VaultState>((set, get) => ({
       await window.notebookApi.vault.deleteFolder(path);
       await get().refreshTree();
     } catch (err) {
-      set({ error: err instanceof Error ? err.message : String(err) });
+      set({ error: errorMessage(err) });
+    }
+  },
+
+  renameFolder: async (path, newName) => {
+    set({ error: null });
+    try {
+      await window.notebookApi.vault.renameFolder(path, newName);
+      await get().refreshTree();
+    } catch (err) {
+      set({ error: errorMessage(err) });
     }
   },
 

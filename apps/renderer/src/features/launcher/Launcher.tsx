@@ -20,7 +20,8 @@ export function Launcher() {
   const hasRecents = recents.length > 0;
 
   return (
-    <div className="flex h-screen flex-col items-center justify-center gap-8 bg-paper px-4 dark:bg-carbon">
+    <div className="h-screen overflow-y-auto bg-paper dark:bg-carbon">
+      <div className="flex min-h-full flex-col items-center justify-center gap-8 px-4 py-8">
       <div className="text-center">
         <h1 className="font-display text-3xl font-extrabold tracking-tight text-brand-600 dark:text-brand-300">
           Personal Notebook
@@ -71,6 +72,7 @@ export function Launcher() {
       </button>
 
       {error && <p className="max-w-md text-center text-sm text-red-600">{error}</p>}
+      </div>
     </div>
   );
 }

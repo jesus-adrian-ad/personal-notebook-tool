@@ -1,4 +1,4 @@
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 import { v4 as uuidv4 } from 'uuid';
 import type { CreateNoteInput, Note, NoteSummary, RenameNoteInput, UpdateNoteInput } from '@notebook/shared';
 import type { VaultService } from './vault.service';
@@ -7,12 +7,24 @@ import {
   contentHash,
   deleteNoteFile,
   moveNoteFile,
+  noteFileExists,
   readNoteFile,
   sanitizeSegment,
   titleFromFilename,
   writeNoteFile,
 } from '../fs/vault-fs';
 import type { NoteRow } from '../repositories/notes.repository';
+
+/**
+ * writeFileSync/renameSync silently replace an existing file, so without this
+ * check a note created or renamed onto an existing title would destroy the
+ * other note's content on disk before the DB's UNIQUE(path) even complained.
+ */
+function assertNoteNameFree(rootPath: string, relativePath: string): void {
+  if (noteFileExists(rootPath, relativePath)) {
+    throw new Error(`Ya existe una nota llamada "${titleFromFilename(relativePath)}" en esta carpeta.`);
+  }
+}
 
 export class NotesService {
   constructor(private readonly vault: VaultService) {}
@@ -34,6 +46,7 @@ export class NotesService {
     const { rootPath, notes } = this.vault.getSession();
     const filename = `${sanitizeSegment(input.title)}.md`;
     const relativePath = input.folderPath ? join(input.folderPath, filename) : filename;
+    assertNoteNameFree(rootPath, relativePath);
 
     const id = uuidv4();
     const body = input.initialBody ?? '';
@@ -123,11 +136,17 @@ export class NotesService {
     const row = notes.getById(input.id);
     if (!row) throw new Error(`Note not found: ${input.id}`);
 
-    moveNoteFile(rootPath, row.path, input.newPath);
+    const folder = dirname(row.path);
+    const filename = `${sanitizeSegment(input.newTitle)}.md`;
+    const newPath = folder === '.' ? filename : join(folder, filename);
+    if (newPath === row.path) return this.toSummary(row);
+    assertNoteNameFree(rootPath, newPath);
+
+    moveNoteFile(rootPath, row.path, newPath);
     notes.upsertNote({
       id: row.id,
-      path: input.newPath,
-      title: titleFromFilename(input.newPath),
+      path: newPath,
+      title: titleFromFilename(newPath),
       createdAt: row.created_at,
       updatedAt: new Date().toISOString(),
       contentHash: row.content_hash,

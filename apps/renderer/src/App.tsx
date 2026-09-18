@@ -47,7 +47,7 @@ export function App() {
           {theme === 'dark' ? '☀️ Claro' : '🌙 Oscuro'}
         </button>
       </header>
-      <div className="grid flex-1 grid-cols-[260px_1fr] overflow-hidden">
+      <div className="grid min-h-0 flex-1 grid-cols-[260px_1fr] grid-rows-[minmax(0,1fr)] overflow-hidden">
         <VaultExplorer />
         <SplitView />
       </div>

@@ -18,6 +18,7 @@ export interface IpcContract {
   'vault:getRecents': { req: void; res: RecentVault[] };
   'vault:removeRecent': { req: { rootPath: string }; res: RecentVault[] };
   'vault:createFolder': { req: { parentPath: string; name: string }; res: void };
+  'vault:renameFolder': { req: { path: string; newName: string }; res: void };
   'vault:deleteFolder': { req: { path: string }; res: void };
 
   'notes:create': { req: CreateNoteInput; res: Note };
